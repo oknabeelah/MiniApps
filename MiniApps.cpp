@@ -4,12 +4,17 @@
 #include < stdio.h > // to allow placeholders in statements
 #include <cstdlib>  // For rand() and srand()
 #include <ctime>    // For time()
+#include <string>
+#include <cctype>   // For toupper
 
 using namespace std; //cin and cout exist within the subspace of std in iostream
 
 //function prototyping
 void KeepCounting();
 void SquarerootCalculator();
+void EncryptTextCaesarCipher();
+void DecryptTextCaesarCipher();
+
 
 int main()
 {
@@ -46,12 +51,12 @@ int main()
 		case 3:
 			cout << "You have selected Encrypt Text (Caesar Cipher) \n";
 			cout << "--------------------------------- \n";
-			//here
+			EncryptTextCaesarCipher();
 			break;
 		case 4:
 			cout << "You have selected Decrypt Text (Caesar Cipher) \n";
 			cout << "--------------------------------- \n";
-			//here
+			DecryptTextCaesarCipher();
 			break;
 		case 5:
 			cout << "You have selected to Quit, ";
@@ -187,8 +192,122 @@ void SquarerootCalculator()
 
 void EncryptTextCaesarCipher() 
 {
-	//hehee
-	//havent even read the brief
-	//here we go
+	const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+	string input; //declarw
+
+	//validate input
+	bool isValid = false;
+	while (!isValid)
+	{
+		cout << "Enter text to encrypt: ";
+		//cin >> input;
+		cin.ignore();  // Clear the input buffer before calling getline
+		getline(cin, input);  // Use getline to allow spaces in input
+
+		isValid = true;
+		for (char& c : input)
+		{
+			c = toupper(c); //convert to uppercase
+
+			if (ALPHABET.find(c) == string::npos && c != ' ') //check each character is in ALPHABET
+			{
+				isValid = false;
+				cout << "Invalid input! Please enter valid characters (A-Z, 0-9, space). \n";
+				break;
+			}
+		}
+	}
+
+	int shift;
+	cout << "Please enter shift (between 1 and 36): ";
+	cin >> shift;
+	//validate shift input
+	while (shift < 1 || shift > 36)
+	{
+		cout << "Invalid shift amount. Please enter a value between 1 and 36.";
+		cin >> shift;
+	}
+	
+	// encrypt duh
+	string encryptedmessage = "";
+	for (char c : input)
+	{
+		if (c == ' ')
+		{
+			encryptedmessage += ' '; // preserve space in encryption
+		}
+		else
+		{
+			//find index of the character in ALPHABET
+			//add shift to index
+			// add char at new index to encryptdd messgae
+			size_t index = ALPHABET.find(c);
+			size_t newIndex = (index + shift) % ALPHABET.length();  // E_n(x) = (x+n) mod 26. formule
+			encryptedmessage += ALPHABET[newIndex];
+		}
+
+	}
+	//display encryped message
+	cout << "The Encrypted message is: '"<< encryptedmessage << "' " << endl;
+}
+
+void DecryptTextCaesarCipher()
+{
+	const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
+
+	string input;
+	bool isValid = false;
+
+	// Input validation
+	while (!isValid)
+	{
+		cout << "Enter text to decrypt: ";
+		cin.ignore();  // Clear the input buffer before calling getline
+		getline(cin, input);  // Allow spaces in input
+
+		isValid = true;
+		for (char& c : input)
+		{
+			c = toupper(c);  // Convert to uppercase
+
+			if (ALPHABET.find(c) == string::npos && c != ' ') // Check for invalid characters
+			{
+				isValid = false;
+				cout << "Invalid input! Please enter valid characters (A-Z, 0-9, space). \n";
+				break;
+			}
+		}
+	}
+
+	int shift;
+	cout << "Please enter shift (between 1 and 36): ";
+	cin >> shift;
+	//validate shift input
+	while (shift < 1 || shift > 36)
+	{
+		cout << "Invalid shift amount. Please enter a value between 1 and 36.";
+		cin >> shift;
+	}
+
+	//decrypt duh
+	string decryptedMessage = "";
+	for (char c : input)
+	{
+		if (c == ' ')
+		{
+			decryptedMessage += ' '; // Preserve space
+		}
+		else
+		{
+			// Find index of the character in ALPHABET
+			size_t index = ALPHABET.find(c);
+			// Subtract shift to get new index
+			size_t newIndex = (index + ALPHABET.length() - shift) % ALPHABET.length(); //formulee
+			// Add the decrypted character to the result
+			decryptedMessage += ALPHABET[newIndex];
+		}
+	}
+	// Display decrypted message
+	cout << "The Decrypted message is: '" << decryptedMessage << "' " << endl;
 }
